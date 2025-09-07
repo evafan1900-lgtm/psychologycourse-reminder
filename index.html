@@ -1,455 +1,364 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 FDU心理学第二周作业催促神器</title>
+    <title>📚 FDU心理学第二周作业催促神器 - 超强催促版</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <style>
-        @keyframes pulse-warning {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        @keyframes flash {
+            0%, 50% { background-color: #ef4444; }
+            25%, 75% { background-color: #dc2626; }
         }
-        .warning-pulse {
-            animation: pulse-warning 1s ease-in-out infinite;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
-        @keyframes urgent-flash {
-            0%, 100% { background-color: #ef4444; }
-            50% { background-color: #dc2626; }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
-        .urgent-flash {
-            animation: urgent-flash 1s ease-in-out infinite;
+        .flash-red {
+            animation: flash 1s infinite;
+        }
+        .shake-urgent {
+            animation: shake 0.5s infinite;
+        }
+        .bounce-crazy {
+            animation: bounce 0.6s infinite;
+        }
+        .urgent-text {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .crazy-border {
+            border: 3px solid #ef4444;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    <div class="container mx-auto px-4 py-6 max-w-4xl">
-        
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
         <!-- 标题区域 -->
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-indigo-800 mb-2">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
                 📚 FDU心理学第二周作业催促神器
             </h1>
-            <p class="text-gray-600">智能提醒 · 知识总结 · 踩分攻略</p>
-            <div class="mt-4 text-sm text-gray-500">
-                <i class="fas fa-clock mr-1"></i>
-                实时更新 | 当前时间: <span id="currentTime"></span>
-            </div>
-        </header>
+            <p class="text-gray-600">让拖延症无处可逃！⏰</p>
+        </div>
 
         <!-- 倒计时区域 -->
-        <section class="grid md:grid-cols-2 gap-6 mb-8">
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
             <!-- 第二周作业倒计时 -->
-            <div id="homework1Card" class="bg-white rounded-lg shadow-lg p-6 border-l-4">
+            <div id="homework-card" class="bg-white rounded-lg shadow-lg p-6 border-l-4">
                 <div class="flex items-center mb-4">
-                    <i class="fas fa-tasks text-2xl mr-3"></i>
+                    <i class="fas fa-clipboard-list text-2xl mr-3"></i>
                     <h2 class="text-xl font-bold">第二周作业</h2>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold mb-2 text-gray-800" id="homework1Countdown"></div>
-                    <div class="text-sm text-gray-600 mb-3">截止：2025年9月9日 24:00</div>
-                    <div id="homework1Status" class="px-4 py-2 rounded-full text-sm font-medium"></div>
+                    <div id="homework-countdown" class="text-2xl font-mono mb-2"></div>
+                    <div id="homework-status" class="text-sm font-semibold"></div>
+                    <div id="homework-message" class="mt-3 p-3 rounded text-sm"></div>
+                </div>
+                <div class="mt-4 text-xs text-gray-500">
+                    截止时间：2025年9月9日 24:00
                 </div>
             </div>
 
             <!-- 期中作业倒计时 -->
-            <div id="midtermCard" class="bg-white rounded-lg shadow-lg p-6 border-l-4">
+            <div id="midterm-card" class="bg-white rounded-lg shadow-lg p-6 border-l-4">
                 <div class="flex items-center mb-4">
                     <i class="fas fa-file-alt text-2xl mr-3"></i>
                     <h2 class="text-xl font-bold">期中作业</h2>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold mb-2 text-gray-800" id="midtermCountdown"></div>
-                    <div class="text-sm text-gray-600 mb-3">截止：2025年9月15日 23:59</div>
-                    <div id="midtermStatus" class="px-4 py-2 rounded-full text-sm font-medium"></div>
+                    <div id="midterm-countdown" class="text-2xl font-mono mb-2"></div>
+                    <div id="midterm-status" class="text-sm font-semibold"></div>
+                    <div id="midterm-message" class="mt-3 p-3 rounded text-sm"></div>
+                </div>
+                <div class="mt-4 text-xs text-gray-500">
+                    截止时间：2025年9月15日 23:59
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- 作业完成清单 -->
-        <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                作业完成清单
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-tasks text-blue-600 mr-3"></i>
+                第二周作业完成清单
             </h2>
             
-            <div class="grid md:grid-cols-2 gap-6">
-                <!-- 第二周作业清单 -->
-                <div class="border rounded-lg p-4">
-                    <h3 class="text-lg font-semibold text-indigo-700 mb-4">📋 第二周作业 (9月9日截止)</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-start">
-                            <i class="fas fa-square-check text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <p class="font-medium">1. 评估团队合作、竞争、冲突水平</p>
-                                <p class="text-sm text-gray-600">根据Lesson 11-12内容，分析具体案例</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-square-check text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <p class="font-medium">2. 完成评估问卷</p>
-                                <p class="text-sm text-gray-600 bg-yellow-50 px-3 py-2 rounded-md mt-1">
-                                    <i class="fas fa-info-circle text-yellow-600 mr-1"></i>
-                                    请在<strong>阶段二课程 → 课前思考</strong>栏目下载"冲突解决方式评估问卷"和"合作、竞争或个人主义取向评估问卷"
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-square-check text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <p class="font-medium">3. 提交课前问卷</p>
-                                <a href="https://mba.jinshuju.com/f/pfcOZF" target="_blank" 
-                                   class="inline-block mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm transition-colors">
-                                    <i class="fas fa-external-link-alt mr-1"></i>点击提交问卷
-                                </a>
-                            </div>
-                        </div>
+            <div class="space-y-4">
+                <div class="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg">
+                    <i class="fas fa-square-check text-blue-600 text-xl mt-1"></i>
+                    <div>
+                        <h3 class="font-semibold text-blue-800">1. 评估团队合作、竞争、冲突水平</h3>
+                        <p class="text-blue-700 text-sm mt-1">基于课程内容，分析你的工作团队现状，并提出解决方案</p>
                     </div>
                 </div>
 
-                <!-- 期中作业清单 -->
-                <div class="border rounded-lg p-4">
-                    <h3 class="text-lg font-semibold text-purple-700 mb-4">📄 期中作业 (9月15日截止)</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-start">
-                            <i class="fas fa-square-check text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <p class="font-medium">Individual Process Paper 1</p>
-                                <p class="text-sm text-gray-600">详细评估工作团队动态</p>
-                            </div>
-                        </div>
-                        <div class="bg-purple-50 p-3 rounded-md text-sm">
-                            <p><strong>要求：</strong>1-2页Word格式</p>
-                            <p><strong>内容：</strong>目标、角色、规范、领导力、沟通、合作、冲突</p>
-                            <p><strong>重点：</strong>分析团队运作、提出改进建议</p>
-                        </div>
+                <div class="flex items-start space-x-3 p-4 bg-green-50 rounded-lg">
+                    <i class="fas fa-square-check text-green-600 text-xl mt-1"></i>
+                    <div>
+                        <h3 class="font-semibold text-green-800">2. 完成冲突解决方式评估问卷</h3>
+                        <p class="text-green-700 text-sm mt-1">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            <strong>获取方式：</strong>登录学习平台 → 阶段二课程 → 课前思考栏目 → 下载问卷
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3 p-4 bg-purple-50 rounded-lg">
+                    <i class="fas fa-square-check text-purple-600 text-xl mt-1"></i>
+                    <div>
+                        <h3 class="font-semibold text-purple-800">3. 提交课前作业问卷</h3>
+                        <a href="https://mba.jinshuju.com/f/pfcOZF" target="_blank" 
+                           class="inline-flex items-center mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                            <i class="fas fa-external-link-alt mr-2"></i>
+                            点击直接提交问卷
+                        </a>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- 课程知识要点 -->
-        <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <i class="fas fa-brain text-purple-500 mr-3"></i>
-                课程知识要点速览
+        <!-- 知识要点速览 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>
+                核心知识要点速览
             </h2>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Lesson 9 -->
-                <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded-r-lg">
-                    <h3 class="font-bold text-blue-800 mb-2">📊 Lesson 9: 团队流程</h3>
-                    <ul class="text-sm space-y-1">
-                        <li>• <strong>社会惰化</strong>：个人贡献减少的现象</li>
-                        <li>• <strong>团队凝聚力</strong>：人际纽带的重要性</li>
-                        <li>• <strong>团队角色</strong>：明确责任与分工</li>
-                        <li>• <strong>团队效能</strong>：激励与目标设定</li>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-blue-800 mb-2">
+                        <i class="fas fa-users mr-2"></i>Lesson 9: 团队流程
+                    </h3>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• 社会惰化现象</li>
+                        <li>• 团队凝聚力建设</li>
+                        <li>• 团队角色分工</li>
+                        <li>• 团队动机激发</li>
                     </ul>
                 </div>
 
-                <!-- Lesson 10 -->
-                <div class="border-l-4 border-green-500 bg-green-50 p-4 rounded-r-lg">
-                    <h3 class="font-bold text-green-800 mb-2">💬 Lesson 10: 沟通</h3>
-                    <ul class="text-sm space-y-1">
-                        <li>• <strong>三要素</strong>：发送者、接收者、信息</li>
-                        <li>• <strong>沟通网络</strong>：集中式vs分散式</li>
-                        <li>• <strong>沟通氛围</strong>：支持性vs防御性</li>
-                        <li>• <strong>信任作用</strong>：沟通效果的基石</li>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-green-800 mb-2">
+                        <i class="fas fa-comments mr-2"></i>Lesson 10: 沟通
+                    </h3>
+                    <ul class="text-sm text-green-700 space-y-1">
+                        <li>• 沟通三要素</li>
+                        <li>• 沟通网络类型</li>
+                        <li>• 沟通氛围营造</li>
+                        <li>• 信任在沟通中的作用</li>
                     </ul>
                 </div>
 
-                <!-- Lesson 11 -->
-                <div class="border-l-4 border-yellow-500 bg-yellow-50 p-4 rounded-r-lg">
-                    <h3 class="font-bold text-yellow-800 mb-2">⚖️ Lesson 11: 合作与竞争</h3>
-                    <ul class="text-sm space-y-1">
-                        <li>• <strong>混合动机</strong>：合作与竞争并存</li>
-                        <li>• <strong>竞争优势</strong>：创新、动力、效率</li>
-                        <li>• <strong>竞争劣势</strong>：不信任、沟通阻碍</li>
-                        <li>• <strong>平衡策略</strong>：外部竞争，内部合作</li>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-purple-800 mb-2">
+                        <i class="fas fa-handshake mr-2"></i>Lesson 11: 合作竞争
+                    </h3>
+                    <ul class="text-sm text-purple-700 space-y-1">
+                        <li>• 混合动机情况</li>
+                        <li>• 竞争的积极影响</li>
+                        <li>• 竞争的消极后果</li>
+                        <li>• 合作氛围建立</li>
                     </ul>
                 </div>
 
-                <!-- Lesson 12 -->
-                <div class="border-l-4 border-red-500 bg-red-50 p-4 rounded-r-lg">
-                    <h3 class="font-bold text-red-800 mb-2">⚡ Lesson 12: 冲突管理</h3>
-                    <ul class="text-sm space-y-1">
-                        <li>• <strong>冲突类型</strong>：个人、实质、程序冲突</li>
-                        <li>• <strong>解决方法</strong>：对峙、合作、妥协、回避</li>
-                        <li>• <strong>谈判技巧</strong>：分配式vs整合式</li>
-                        <li>• <strong>调解仲裁</strong>：第三方介入机制</li>
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-red-800 mb-2">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Lesson 12: 冲突管理
+                    </h3>
+                    <ul class="text-sm text-red-700 space-y-1">
+                        <li>• 冲突的类型和来源</li>
+                        <li>• 健康vs不健康冲突</li>
+                        <li>• 冲突解决五种方法</li>
+                        <li>• 谈判与调解技巧</li>
                     </ul>
                 </div>
 
-                <!-- Lesson 13 -->
-                <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded-r-lg">
-                    <h3 class="font-bold text-indigo-800 mb-2">💻 Lesson 13: 虚拟团队</h3>
-                    <ul class="text-sm space-y-1">
-                        <li>• <strong>定义特征</strong>：时间、距离、技术分散</li>
-                        <li>• <strong>优势</strong>：节约成本、扩大人才库</li>
-                        <li>• <strong>挑战</strong>：沟通不畅、信任建立难</li>
-                        <li>• <strong>管理要点</strong>：建立沟通规范</li>
+                <div class="bg-indigo-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-indigo-800 mb-2">
+                        <i class="fas fa-laptop mr-2"></i>Lesson 13: 虚拟团队
+                    </h3>
+                    <ul class="text-sm text-indigo-700 space-y-1">
+                        <li>• 虚拟团队定义</li>
+                        <li>• 优势与劣势分析</li>
+                        <li>• 沟通影响</li>
+                        <li>• 绩效管理策略</li>
                     </ul>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- 踩分攻略 -->
-        <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <i class="fas fa-bullseye text-red-500 mr-3"></i>
+        <!-- 作业攻略 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-trophy text-yellow-500 mr-3"></i>
                 踩分攻略秘籍
             </h2>
-            
-            <div class="grid md:grid-cols-2 gap-6">
-                <!-- 第二周作业攻略 -->
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-lg">
-                    <h3 class="text-lg font-bold text-blue-800 mb-4">📝 第二周作业高分Tips</h3>
-                    <div class="space-y-3 text-sm">
-                        <div class="flex items-start">
-                            <i class="fas fa-lightbulb text-yellow-500 mt-0.5 mr-2"></i>
-                            <p><strong>评估团队时：</strong>结合具体案例，不要泛泛而谈。用Lesson 11-12的理论框架分析</p>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-lightbulb text-yellow-500 mt-0.5 mr-2"></i>
-                            <p><strong>问卷填写：</strong>保持一致性，避免前后矛盾的答案</p>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-lightbulb text-yellow-500 mt-0.5 mr-2"></i>
-                            <p><strong>解决方案：</strong>提出具体可行的改进建议，不要只停留在问题描述</p>
-                        </div>
+
+            <div class="space-y-6">
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="font-bold text-blue-800 mb-2">📝 周作业评估技巧</h3>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>团队合作评估：</strong>从沟通频率、目标一致性、互助行为三个维度分析</p>
+                        <p><strong>竞争分析：</strong>区分健康竞争（促进创新）vs恶性竞争（破坏关系）</p>
+                        <p><strong>冲突解决：</strong>结合课程的五种冲突解决方法，给出具体应用场景</p>
                     </div>
                 </div>
 
-                <!-- 期中作业攻略 -->
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-lg">
-                    <h3 class="text-lg font-bold text-purple-800 mb-4">🎯 期中作业高分Tips</h3>
-                    <div class="space-y-3 text-sm">
-                        <div class="flex items-start">
-                            <i class="fas fa-trophy text-yellow-500 mt-0.5 mr-2"></i>
-                            <p><strong>结构清晰：</strong>按照要求的7个维度逐一分析（目标、角色、规范等）</p>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-trophy text-yellow-500 mt-0.5 mr-2"></i>
-                            <p><strong>理论结合实践：</strong>引用课程理论，结合具体团队经历</p>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-trophy text-yellow-500 mt-0.5 mr-2"></i>
-                            <p><strong>改进建议：</strong>提出3-5个具体的、可操作的改进方案</p>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-trophy text-yellow-500 mt-0.5 mr-2"></i>
-                            <p><strong>字数控制：</strong>1-2页，重质量不重数量，每段都要有价值</p>
-                        </div>
+                <div class="border-l-4 border-green-500 pl-4">
+                    <h3 class="font-bold text-green-800 mb-2">📋 问卷填写策略</h3>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>冲突解决问卷：</strong>结合实际工作场景，避免极端选项，体现思考深度</p>
+                        <p><strong>合作竞争问卷：</strong>展现对团队动态的理解，平衡个人与团队利益</p>
+                    </div>
+                </div>
+
+                <div class="border-l-4 border-purple-500 pl-4">
+                    <h3 class="font-bold text-purple-800 mb-2">📖 期中作业写作指南</h3>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Individual Process Paper (1-2页)：</strong></p>
+                        <p>• <strong>开头：</strong>简述团队基本情况和分析框架</p>
+                        <p>• <strong>主体：</strong>从目标、角色、规范、领导力、沟通、合作、冲突七个维度分析</p>
+                        <p>• <strong>改进建议：</strong>针对性提出2-3个具体可行的改进方案</p>
+                        <p>• <strong>实施计划：</strong>简述如何推进改进措施</p>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <!-- 催促金句 -->
-        <section class="bg-gradient-to-r from-orange-400 to-red-500 text-white rounded-lg p-6 mb-8">
-            <div class="text-center">
-                <h2 class="text-2xl font-bold mb-4">💪 今日催促金句</h2>
-                <p id="motivationalQuote" class="text-lg italic"></p>
-            </div>
-        </section>
+        </div>
 
         <!-- 页脚 -->
-        <footer class="text-center text-gray-500 text-sm">
-            <p>🎓 FDU心理学硕士项目 | 一号组组长贴心提醒</p>
-            <p class="mt-1">愿所有同学都能按时完成作业，顺利毕业！ 🎉</p>
-        </footer>
+        <div class="text-center text-gray-500 text-sm">
+            <p>🔥 拖延症克星，学分收割机 🔥</p>
+            <p class="mt-2">记住：时间不等人，该收收心啦~ 😉</p>
+        </div>
     </div>
 
     <script>
-        // 截止时间设置
-        const homework1Deadline = new Date('2025-09-09T23:59:59');
-        const midtermDeadline = new Date('2025-09-15T23:59:59');
-
-        // 催促金句库
-        const motivationalQuotes = [
-            "时间不等人，作业不等拖延症患者！📚",
-            "距离deadline越近，学分越珍贵！💎",
-            "拖延一时爽，熬夜火葬场！🔥",
-            "作业写得早，睡觉睡得好！😴",
-            "今日事今日毕，明日更有新作业！📝",
-            "学分在手，毕业不愁！🎓",
-            "不是在写作业，就是在写作业的路上！🚶‍♀️",
-            "deadline是第一生产力！⚡",
-            "早交作业早解脱，晚交作业晚睡觉！🌙",
-            "作业虐我千百遍，我待作业如初恋！💕"
-        ];
-
-        function updateCurrentTime() {
+        function updateCountdowns() {
             const now = new Date();
-            document.getElementById('currentTime').textContent = now.toLocaleString('zh-CN');
+            
+            // 作业截止时间
+            const homeworkDeadline = new Date('2025-09-09T23:59:59');
+            const midtermDeadline = new Date('2025-09-15T23:59:59');
+            
+            updateSingleCountdown(now, homeworkDeadline, 'homework');
+            updateSingleCountdown(now, midtermDeadline, 'midterm');
         }
 
-        function getTimeRemaining(deadline) {
-            const now = new Date();
-            const difference = deadline - now;
-            
-            if (difference <= 0) {
-                return { expired: true, days: 0, hours: 0, minutes: 0, seconds: 0 };
-            }
-            
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-            
-            return { expired: false, days, hours, minutes, seconds };
-        }
+        function updateSingleCountdown(now, deadline, type) {
+            const timeDiff = deadline - now;
+            const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
-        function getStatusInfo(timeRemaining, isHomework1 = true) {
-            if (timeRemaining.expired) {
-                return {
-                    text: '已逾期，请联系老师',
-                    color: 'bg-gray-500 text-white',
-                    cardColor: 'border-gray-500',
-                    urgent: false
-                };
-            }
-            
-            const totalHours = timeRemaining.days * 24 + timeRemaining.hours;
-            
-            if (isHomework1) {
-                if (totalHours > 48) { // >2天
-                    return {
-                        text: '时间充裕，可以慢慢准备',
-                        color: 'bg-green-100 text-green-800',
-                        cardColor: 'border-green-500',
-                        urgent: false
-                    };
-                } else if (totalHours > 24) { // 1-2天
-                    return {
-                        text: '该开始准备啦！',
-                        color: 'bg-yellow-100 text-yellow-800',
-                        cardColor: 'border-yellow-500',
-                        urgent: false
-                    };
-                } else if (totalHours > 12) { // 12-24小时
-                    return {
-                        text: '抓紧时间，别拖延了！',
-                        color: 'bg-orange-100 text-orange-800',
-                        cardColor: 'border-orange-500',
-                        urgent: false
-                    };
-                } else if (totalHours > 3) { // 3-12小时
-                    return {
-                        text: '今晚就要截止了！赶紧行动！',
-                        color: 'bg-red-100 text-red-800',
-                        cardColor: 'border-red-500',
-                        urgent: true
-                    };
-                } else { // <3小时
-                    return {
-                        text: '紧急警告：还有几小时！',
-                        color: 'bg-red-600 text-white',
-                        cardColor: 'border-red-600',
-                        urgent: true
-                    };
+            const countdownEl = document.getElementById(`${type}-countdown`);
+            const statusEl = document.getElementById(`${type}-status`);
+            const messageEl = document.getElementById(`${type}-message`);
+            const cardEl = document.getElementById(`${type}-card`);
+
+            if (timeDiff > 0) {
+                countdownEl.textContent = `${days}天 ${hours}时 ${minutes}分 ${seconds}秒`;
+                
+                // 根据剩余时间设置不同的催促强度
+                if (days >= 3) {
+                    // 3天以上 - 温和提醒
+                    cardEl.className = 'bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500';
+                    statusEl.className = 'text-sm font-semibold text-green-600';
+                    statusEl.textContent = '🟢 时间充裕，稳步推进';
+                    messageEl.className = 'mt-3 p-3 rounded text-sm bg-green-100 text-green-800';
+                    messageEl.textContent = type === 'homework' ? 
+                        '还有时间慢慢来，但也别完全放松哦~ 记得先看课程视频！' : 
+                        '期中作业不急，先专心完成周作业吧！';
+                        
+                } else if (days >= 2) {
+                    // 2-3天 - 橙色警告
+                    cardEl.className = 'bg-white rounded-lg shadow-lg p-6 border-l-4 border-orange-500';
+                    statusEl.className = 'text-sm font-semibold text-orange-600';
+                    statusEl.textContent = '🟡 该抓紧时间了！';
+                    messageEl.className = 'mt-3 p-3 rounded text-sm bg-orange-100 text-orange-800 font-semibold';
+                    messageEl.textContent = type === 'homework' ? 
+                        '⚠️ 时间不多了！赶紧开始做作业，别再拖延了！课程视频看了吗？问卷填了吗？' : 
+                        '⚠️ 期中作业也该开始准备了！1-2页的报告需要时间构思！';
+                        
+                } else if (days >= 1) {
+                    // 1-2天 - 红色紧急
+                    cardEl.className = 'bg-white rounded-lg shadow-lg p-6 border-l-4 border-red-500 shake-urgent';
+                    statusEl.className = 'text-sm font-semibold text-red-600 urgent-text';
+                    statusEl.textContent = '🔴 紧急状态！立刻行动！';
+                    messageEl.className = 'mt-3 p-3 rounded text-sm bg-red-100 text-red-800 font-bold';
+                    messageEl.textContent = type === 'homework' ? 
+                        '🚨 只剩1-2天了！！！手机放下，立刻去做作业！不要再找借口了！问卷链接就在上面，课程视频赶紧看完！' : 
+                        '🚨 期中作业明后天就要交了！赶紧写Individual Process Paper！';
+                        
+                } else {
+                    // 少于1天 - 疯狂催促
+                    cardEl.className = 'bg-white rounded-lg shadow-lg p-6 crazy-border flash-red bounce-crazy';
+                    statusEl.className = 'text-sm font-bold text-white urgent-text';
+                    statusEl.textContent = '💥 最后时刻！疯狂冲刺！';
+                    messageEl.className = 'mt-3 p-3 rounded text-sm bg-red-600 text-white font-bold urgent-text';
+                    messageEl.textContent = type === 'homework' ? 
+                        '🔥🔥🔥 今晚就要交了！！！别睡觉了！马上做作业！再不做就来不及了！问卷、评估、视频，全部马上完成！🔥🔥🔥' : 
+                        '🔥🔥🔥 期中作业最后几小时！赶紧写报告提交！不要等到最后一分钟！🔥🔥🔥';
+                    
+                    // 在最后24小时播放警告音（如果用户允许）
+                    if (hours <= 12) {
+                        try {
+                            // 创建提示音
+                            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            oscillator.frequency.value = 800;
+                            oscillator.type = 'sine';
+                            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                            oscillator.start();
+                            oscillator.stop(audioContext.currentTime + 0.3);
+                        } catch (e) {
+                            // 忽略音频错误
+                        }
+                    }
                 }
+                
             } else {
-                // 期中作业
-                if (totalHours > 120) { // >5天
-                    return {
-                        text: '先完成周作业，期中不急',
-                        color: 'bg-green-100 text-green-800',
-                        cardColor: 'border-green-500',
-                        urgent: false
-                    };
-                } else if (totalHours > 72) { // 3-5天
-                    return {
-                        text: '可以开始准备期中作业了',
-                        color: 'bg-yellow-100 text-yellow-800',
-                        cardColor: 'border-yellow-500',
-                        urgent: false
-                    };
-                } else if (totalHours > 24) { // 1-3天
-                    return {
-                        text: '期中作业抓紧时间！',
-                        color: 'bg-orange-100 text-orange-800',
-                        cardColor: 'border-orange-500',
-                        urgent: false
-                    };
-                } else if (totalHours > 6) { // 6-24小时
-                    return {
-                        text: '期中作业今晚截止！',
-                        color: 'bg-red-100 text-red-800',
-                        cardColor: 'border-red-500',
-                        urgent: true
-                    };
-                } else { // <6小时
-                    return {
-                        text: '最后几小时！赶紧提交！',
-                        color: 'bg-red-600 text-white',
-                        cardColor: 'border-red-600',
-                        urgent: true
-                    };
-                }
+                // 已过期
+                countdownEl.textContent = '已截止';
+                cardEl.className = 'bg-gray-100 rounded-lg shadow-lg p-6 border-l-4 border-gray-500';
+                statusEl.className = 'text-sm font-semibold text-gray-600';
+                statusEl.textContent = '❌ 已过截止时间';
+                messageEl.className = 'mt-3 p-3 rounded text-sm bg-gray-200 text-gray-700';
+                messageEl.textContent = type === 'homework' ? 
+                    '错过了提交时间，请联系老师说明情况，看是否还能补交。' : 
+                    '期中作业已截止，请联系老师确认后续安排。';
             }
         }
 
-        function updateCountdown() {
-            // 更新第二周作业倒计时
-            const homework1Time = getTimeRemaining(homework1Deadline);
-            const homework1Status = getStatusInfo(homework1Time, true);
-            
-            if (homework1Time.expired) {
-                document.getElementById('homework1Countdown').textContent = '已逾期';
-            } else {
-                document.getElementById('homework1Countdown').textContent = 
-                    `${homework1Time.days}天 ${homework1Time.hours}时 ${homework1Time.minutes}分`;
-            }
-            
-            const homework1StatusEl = document.getElementById('homework1Status');
-            homework1StatusEl.textContent = homework1Status.text;
-            homework1StatusEl.className = `px-4 py-2 rounded-full text-sm font-medium ${homework1Status.color}`;
-            if (homework1Status.urgent) {
-                homework1StatusEl.classList.add('warning-pulse');
-            }
-            
-            const homework1Card = document.getElementById('homework1Card');
-            homework1Card.className = `bg-white rounded-lg shadow-lg p-6 border-l-4 ${homework1Status.cardColor}`;
-            
-            // 更新期中作业倒计时
-            const midtermTime = getTimeRemaining(midtermDeadline);
-            const midtermStatus = getStatusInfo(midtermTime, false);
-            
-            if (midtermTime.expired) {
-                document.getElementById('midtermCountdown').textContent = '已逾期';
-            } else {
-                document.getElementById('midtermCountdown').textContent = 
-                    `${midtermTime.days}天 ${midtermTime.hours}时 ${midtermTime.minutes}分`;
-            }
-            
-            const midtermStatusEl = document.getElementById('midtermStatus');
-            midtermStatusEl.textContent = midtermStatus.text;
-            midtermStatusEl.className = `px-4 py-2 rounded-full text-sm font-medium ${midtermStatus.color}`;
-            if (midtermStatus.urgent) {
-                midtermStatusEl.classList.add('warning-pulse');
-            }
-            
-            const midtermCard = document.getElementById('midtermCard');
-            midtermCard.className = `bg-white rounded-lg shadow-lg p-6 border-l-4 ${midtermStatus.cardColor}`;
-        }
+        // 初始化并每秒更新
+        updateCountdowns();
+        setInterval(updateCountdowns, 1000);
 
-        function showRandomQuote() {
-            const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
-            document.getElementById('motivationalQuote').textContent = randomQuote;
-        }
-
-        // 初始化
-        updateCurrentTime();
-        updateCountdown();
-        showRandomQuote();
-
-        // 定时更新
-        setInterval(updateCurrentTime, 1000);
-        setInterval(updateCountdown, 1000);
-        setInterval(showRandomQuote, 10000); // 每10秒换一句催促语
+        // 页面加载完成后的欢迎提示
+        window.addEventListener('load', function() {
+            console.log('🔥 FDU心理学作业催促神器已启动！拖延症患者的噩梦开始了~ 😈');
+        });
     </script>
 </body>
 </html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDpCJwJEmr%2FVBsVRuHKXnuE7QQlDAf83c675YzwJ1itO7QWpFZgr1gf17YHmuOsE9GjVRArerxEFBdbrFAsngtij6p8DfH40NdUvM6Bzr6XgmiPTtJly0AhoB5hvmoEdZzq6xaq0OptRsZmzi2nD5XOXIFK2Cr4wPbn%2FKvEbErTyfCZIO%2BOBUcxlotDGr9NjvCLzQtK4mY99g%2BQEOQwhocR%2FoFtOGDQpZ5LK1Nxywq6086aGaOPMmhJKGiTGjTqTx0bhJSjRAhOOlzaEUQsX%2Bikqrlif6GGlheMk3t1B3lYx%2FTSs33Jyv4WmjOcWgvlwPdE%2FRfAfo2yySY1r3jTrO92fce4f9snMP7GXsiZcKw%2BKfiftXukADD8tVRAXPkq7fdcNCFnacpEyk4bxIDZF1uYtVTT95j45IhRnDfUAWZ7cDOoKTgux1t%2BbUcLnQns2BsoPr0CSWXVNBBhum7P68chxLpIIgrTV3kEdSAqwPJr7xQBzDgorndrmrZCBmvwG1RA%3D%3D";
+        window.__genspark_locale = "zh-CN";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDpCJwJEmr/VBsVRuHKXnuE7QQlDAf83c675YzwJ1itO7QWpFZgr1gf17YHmuOsE9GjVRArerxEFBdbrFAsngtij6p8DfH40NdUvM6Bzr6XgmiPTtJly0AhoB5hvmoEdZzq6xaq0OptRsZmzi2nD5XOXIFK2Cr4wPbn/KvEbErTyfCZIO+OBUcxlotDGr9NjvCLzQtK4mY99g+QEOQwhocR/oFtOGDQpZ5LK1Nxywq6086aGaOPMmhJKGiTGjTqTx0bhJSjRAhOOlzaEUQsX+ikqrlif6GGlheMk3t1B3lYx/TSs33Jyv4WmjOcWgvlwPdE/RfAfo2yySY1r3jTrO92fce4f9snMP7GXsiZcKw+KfiftXukADD8tVRAXPkq7fdcNCFnacpEyk4bxIDZF1uYtVTT95j45IhRnDfUAWZ7cDOoKTgux1t+bUcLnQns2BsoPr0CSWXVNBBhum7P68chxLpIIgrTV3kEdSAqwPJr7xQBzDgorndrmrZCBmvwG1RA==";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
